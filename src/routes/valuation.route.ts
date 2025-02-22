@@ -21,6 +21,10 @@ const calcRiderCommission = (commission: number, distance: number) => {
   return commission * distance;
 };
 
+const decimalNumberFormat = (val: number) => {
+  return Math.round(val * 100) / 100;
+};
+
 router.post(
   "/calcValuation",
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -31,12 +35,14 @@ router.post(
       {
         fromAddress,
         toAddress,
+        vechicleType,
       }
     );
     if (!response) {
       res.status(500).send({ err: "unable to get message." });
     }
-    const distance = 10;
+
+    const distance = response.data.distanceKm;
     let price;
     let commission;
 
@@ -53,9 +59,11 @@ router.post(
       res.status(400).send({ err: "Vechicle type is not valid!" });
     }
 
-    const cost: number = calcTotalCost(price, distance);
-    const rider_commission: number = calcRiderCommission(commission, distance);
-    const tax = cost * 0.15;
+    const cost: number = decimalNumberFormat(calcTotalCost(price, distance));
+    const rider_commission: number = decimalNumberFormat(
+      calcRiderCommission(commission, distance)
+    );
+    const tax = decimalNumberFormat(cost * 0.15);
 
     res.status(200).send({ cost, rider_commission, tax, ...response.data });
   }
