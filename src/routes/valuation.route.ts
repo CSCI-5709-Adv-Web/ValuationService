@@ -1,6 +1,10 @@
 import express, { NextFunction, Request, Response } from "express";
-import { ValuationReq } from "../types/valuationReq.type";
+import { ValuationReq, ValuationResp } from "../types/valuation.type";
 import axios from "axios";
+import dotenv from "dotenv";
+dotenv.config();
+
+const LOCATION_SERVICE_URL = process.env.LOCATION_SERVICE_URL;
 
 const router = express.Router();
 // const LOCATION_SERVICE_URL =
@@ -26,18 +30,14 @@ const decimalNumberFormat = (val: number) => {
 };
 
 router.post(
-  "/calcValuation",
+  "/calculate",
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    let { fromAddress, toAddress, vechicleType }: ValuationReq = req.body;
+    let { from_address, to_address, vehicle_type }: ValuationReq = req.body;
 
-    const response = await axios.post(
-      "http://localhost:3001/api/location/route",
-      {
-        fromAddress,
-        toAddress,
-        vechicleType,
-      }
-    );
+    const response = await axios.post(LOCATION_SERVICE_URL + "/matrix", {
+      fromAddress: from_address,
+      toAddress: to_address,
+    });
     if (!response) {
       res.status(500).send({ err: "unable to get message." });
     }
@@ -46,13 +46,13 @@ router.post(
     let price;
     let commission;
 
-    if (vechicleType === "BIKE") {
+    if (vehicle_type === "BIKE") {
       price = BIKE_PRICE;
       commission = RIDER_BIKE_COMMISSION;
-    } else if (vechicleType === "CAR") {
+    } else if (vehicle_type === "CAR") {
       price = CAR_PRICE;
       commission = RIDER_CAR_COMMISSION;
-    } else if (vechicleType === "TRUCK") {
+    } else if (vehicle_type === "TRUCK") {
       price = TRUCK_PRICE;
       commission = RIDER_TRUCK_COMMISSION;
     } else {
@@ -65,7 +65,16 @@ router.post(
     );
     const tax = decimalNumberFormat(cost * 0.15);
 
-    res.status(200).send({ cost, rider_commission, tax, ...response.data });
+    res.status(200).send({
+      pricing_details: {
+        cost,
+        rider_commission,
+        tax,
+        total_cost: cost + tax,
+      },
+      distance: response.data.distanceKm,
+      time: response.data.durationMinutes,
+    } as ValuationResp);
   }
 );
 
