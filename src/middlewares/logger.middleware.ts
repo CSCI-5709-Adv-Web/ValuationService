@@ -1,13 +1,9 @@
 import type { Request, Response, NextFunction } from "express"
 import { logger } from "../utils/logger"
 
-// List of headers that might contain sensitive information
 const SENSITIVE_HEADERS = ["authorization", "x-api-key", "cookie", "set-cookie"]
-
-// List of fields that might contain sensitive information
 const SENSITIVE_FIELDS = ["password", "token", "secret", "credit_card", "card_number", "cvv", "ssn"]
 
-// Function to redact sensitive data
 const redactSensitiveData = (obj: any, sensitiveFields: string[] = SENSITIVE_FIELDS): any => {
     if (!obj || typeof obj !== "object") return obj
     const result = Array.isArray(obj) ? [...obj] : { ...obj }
@@ -44,7 +40,6 @@ const redactSensitiveData = (obj: any, sensitiveFields: string[] = SENSITIVE_FIE
         })
         return originalSend.call(this, body)
     }
-
     res.json = function (body: any): Response {
         logger.info(`Outgoing response: ${req.method} ${req.originalUrl} ${res.statusCode}`, {
         requestId: req.id,

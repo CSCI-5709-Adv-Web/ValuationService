@@ -47,13 +47,10 @@ export class NotFoundError extends BaseError {
 
 export class ServiceUnavailableError extends BaseError {
   constructor(message = "Service unavailable", serviceName?: string) {
-    // Use a type guard to ensure we're using a valid ErrorCode
     let code: ErrorCode = ErrorCodes.SERVICE_UNAVAILABLE
-
     if (serviceName === "location") {
       code = ErrorCodes.LOCATION_SERVICE_ERROR
     }
-
     super("ServiceUnavailableError", ApiStatusCodes.SERVICE_UNAVAILABLE, code, message, { service: serviceName }, true)
   }
 }
