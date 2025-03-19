@@ -9,7 +9,7 @@ export const ExpressApp = async () => {
   app.use(express.json());
   app.use(httpLogger);
 
-  app.use(valuationRoute);
+  app.use("/valuation",valuationRoute);
 
   app.use(HandleErrorWithLogger);
 
