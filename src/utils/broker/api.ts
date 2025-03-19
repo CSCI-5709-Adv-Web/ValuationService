@@ -1,26 +1,23 @@
-import axios from "axios";
-import { AuthorizeError, NotFoundError } from "../error";
-// import { User } from "../../dto/User.Model";
-
-const AUTH_SERVICE_BASE_URL =
-  process.env.AUTH_SERVICE_BASE_URL || "http://localhost:9000";
+import axios from "axios"
+import { AuthorizeError } from "../error"
+import { config } from "../../config"
+import { logger } from "../logger"
 
 export const ValidateUser = async (token: string) => {
-    try {
-      console.log("ValidateUser called", token);
-      const response = await axios.get(`${AUTH_SERVICE_BASE_URL}/auth/validate`, {
-        headers: {
-          Authorization: token,
-        },
-      });
-  
-      console.log("response", response.data);
-  
-      if (response.status !== 200) {
-        throw new AuthorizeError("user not authorised");
-      }
-    //   return response.data as User;
-    } catch (error) {
-      throw new AuthorizeError("user not authorised");
+  try {
+    logger.debug("Validating user token")
+    const response = await axios.get(`${config.services.auth}/auth/validate`, {
+      headers: {
+        Authorization: token,
+      },
+    })
+    if (response.status !== 200) {
+      throw new AuthorizeError("User not authorized")
     }
-  };
+    return response.data
+  } catch (error) {
+    logger.error(`Authentication error: ${error}`)
+    throw new AuthorizeError("User not authorized")
+  }
+}
+

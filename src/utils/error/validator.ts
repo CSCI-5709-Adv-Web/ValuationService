@@ -6,7 +6,6 @@ export const ValidateError = async (
   const error = await validate(input, {
     ValidationError: { target: true, property: true },
   });
-
   if (error.length) {
     return error.map((err) => ({
       field: err.property,
