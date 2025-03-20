@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: valuation-api
+  labels:
+    app: valuation-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: valuation-api
+  template:
+    metadata:
+      labels:
+        app: valuation-api
+    spec:
+      containers:
+        - name: valuation-service-container
+          image: us-east1-docker.pkg.dev/cloud-a3-453520/cloud-a3-container-first/cloud-a3-container-first:latest
+          ports:
+            - containerPort: 3002
+          env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: valuation-service-configmap
+                  key: port
+            - name: LOCATION_SERVICE
+              valueFrom:
+                configMapKeyRef:
+                  name: valuation-service-configmap
+                  key: location-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: valuation-service
+spec:
+  selector:
+    app: valuation-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3002
