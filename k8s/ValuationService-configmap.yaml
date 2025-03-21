@@ -7,3 +7,4 @@ metadata:
 data:
   port: "3002"
   location-service: "http://location-api:80/valuation"
+  authentication-service: "http://auth-api:80/api"
