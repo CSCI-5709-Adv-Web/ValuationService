@@ -6,5 +6,5 @@ metadata:
     app: valuation-service-configmap
 data:
   port: "3002"
-  location-service: "http://location-api:80/location"
+  location-service: "http://location-api:80/api"
   authentication-service: "http://auth-api:80/api"
