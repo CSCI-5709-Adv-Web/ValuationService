@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: valuation-service-container
-          image: us-east1-docker.pkg.dev/cloud-a3-453520/cloud-a3-container-first/cloud-a3-container-first:latest
+          image: jashpatel1511/web-valuation-service:latest
           ports:
             - containerPort: 3002
           env:
