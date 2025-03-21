@@ -7,10 +7,10 @@
     "strict": true,
     "skipLibCheck": true,
     "outDir": "./dist",
-    "rootDir": "./",  // Changed from "./src" to "./"
+    "rootDir": "./src", // Changed from "./src" to "./"
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "typeRoots": ["./node_modules/@types", "./types"]  // Add this line
+    "typeRoots": ["./node_modules/@types", "./types"] // Add this line
   },
   "include": ["src/**/*", "types/**/*"],
   "exclude": ["node_modules", "dist"]
